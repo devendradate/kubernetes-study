@@ -33,6 +33,7 @@ Add dashboard from dashboard file
 
 
 Delete
+
 helm delete 
 pvc delete 
 
