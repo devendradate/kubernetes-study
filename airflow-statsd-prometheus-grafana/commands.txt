@@ -1,0 +1,39 @@
+
+
+Airflow 
+
+helm repo add apache-airflow https://airflow.apache.org
+helm repo update
+helm install airflow apache-airflow/airflow --create-namespace -n airflow -f official-values.yaml --timeout 15m0s --debug
+kubectl port-forward svc/airflow-webserver 8080:8080 --namespace airflow
+kubectl port-forward svc/airflow-statsd 9102:9102 --namespace airflow 
+(http://localhost:9102/metrics)
+
+
+Prometheus
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+WORKING: helm install prometheus prometheus-community/prometheus -n airflow
+
+TESTING: helm upgrade --install prometheus prometheus-community/prometheus -f prometheus-values.yaml -n airflow --debug
+export POD_NAME=$(kubectl get pods --namespace airflow -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+kubectl --namespace airflow port-forward $POD_NAME 9090
+
+
+Grafana
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install grafana grafana/grafana -f grafana-values.yaml -n airflow
+export POD_NAME=$(kubectl get pods --namespace airflow -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
+kubectl --namespace airflow port-forward $POD_NAME 3000
+kubectl get secret --namespace airflow grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+
+Add dashboard from dashboard file
+
+
+Delete
+helm delete 
+pvc delete 
+
+
