@@ -1,4 +1,9 @@
 
+NOTE
+
+This is POC project which install airflow with statsD enable, promtheus to scrape statsD data and grafana with hardcoded dashboard 
+All values inside values.yaml are hardcoded as of now.
+IT IS WORK IN PROGRESS
 
 Airflow 
 
